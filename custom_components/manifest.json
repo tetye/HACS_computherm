@@ -1,0 +1,10 @@
+{
+  "domain": "Computherm",
+  "name": "Computherm Thermostat",
+  "documentation": "https://github.com/tetye/HACS_floureon",
+  "dependencies": [],
+  "codeowners": ["@tetye"],
+  "issue_tracker": "https://github.com/tetye/HACS_floureon/issues",
+  "requirements": ["pythoncrc", "broadlink>=0.18.3"],
+  "version": "1.0.1"
+}
