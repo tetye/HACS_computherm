@@ -6,7 +6,7 @@ as well as improve motivation and helps me understand, that this project is usef
 <a href="https://www.buymeacoffee.com/tetye" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 
 # Intro
-Component for controlling Computherm, Floureon or other chinese-based WiFi smart thermostat (Beok and others). Climate component will have 3 modes: "auto" (in which will used thermostat's internal schedule), "heat (which is "manual" mode) and "off". Also, while in "heat" mode it is possible to use preset "away". Changing mode to other than "heat" will set preset to "none". 
+Component for controlling Computherm, Computherm or other chinese-based WiFi smart thermostat (Beok and others). Climate component will have 3 modes: "auto" (in which will used thermostat's internal schedule), "heat (which is "manual" mode) and "off". Also, while in "heat" mode it is possible to use preset "away". Changing mode to other than "heat" will set preset to "none". 
 
 If you want to use custom or more advanced control, you should use switch component and generic thermostat in Home Assistant instead. See below for configuration.
 
@@ -26,7 +26,7 @@ If you want to use custom or more advanced control, you should use switch compon
 #### Example:
 ```yaml
 climate:
-  platform: floureon
+  platform: computherm
   name: livingroom_floor
   host: 192.168.0.1
   port: 8081
@@ -47,7 +47,7 @@ climate:
 #### Example:
 ```yaml
 switch:
-  platform: floureon
+  platform: computherm
   name: livingroom_floor
   host: 192.168.0.1
   port: 8081

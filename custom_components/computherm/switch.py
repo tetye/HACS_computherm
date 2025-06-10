@@ -1,5 +1,5 @@
 from socket import timeout
-from custom_components.floureon import (
+from custom_components.computherm import (
     BroadlinkThermostat,
     CONF_HOST,
     CONF_UNIQUE_ID,
@@ -60,10 +60,10 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the platform."""
-    async_add_entities([FloureonSwitch(hass, config)])
+    async_add_entities([ComputhermSwitch(hass, config)])
 
 
-class FloureonSwitch(SwitchEntity, RestoreEntity):
+class ComputhermSwitch(SwitchEntity, RestoreEntity):
 
     def __init__(self, hass, config):
         self._hass = hass

@@ -3,7 +3,7 @@ from typing import List, Optional
 
 import voluptuous as vol
 
-from custom_components.floureon import (
+from custom_components.computherm import (
     BroadlinkThermostat,
     CONF_HOST,
     CONF_USE_EXTERNAL_TEMP,
@@ -74,10 +74,10 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the generic thermostat platform."""
-    async_add_entities([FloureonClimate(hass, config)])
+    async_add_entities([ComputhermClimate(hass, config)])
 
 
-class FloureonClimate(ClimateEntity, RestoreEntity):
+class ComputhermClimate(ClimateEntity, RestoreEntity):
     _enable_turn_on_off_backwards_compatibility = False
 
     def __init__(self, hass, config):
