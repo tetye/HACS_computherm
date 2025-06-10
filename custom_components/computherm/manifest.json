@@ -1,5 +1,5 @@
 {
-  "domain": "Computherm",
+  "domain": "computherm",
   "name": "Computherm Thermostat",
   "documentation": "https://github.com/tetye/HACS_computherm",
   "dependencies": [],
