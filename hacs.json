@@ -1,0 +1,8 @@
+{
+  "name": "Computherm Thermostat",
+  "content_in_root": false,
+  "domains": ["switch", "climate"],  
+  "homeassistant": "0.110.0",
+  "iot_class": "Local Polling",
+  "render_readme": true
+}
