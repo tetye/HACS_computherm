@@ -4,7 +4,6 @@ from custom_components.computherm import (
     CONF_HOST,
     CONF_UNIQUE_ID,
     CONF_USE_EXTERNAL_TEMP,
-    CONF_USE_EXTERNAL_TEMP,
     DEFAULT_SCHEDULE,
     DEFAULT_USE_EXTERNAL_TEMP,
     BROADLINK_POWER_ON,
@@ -115,41 +114,40 @@ class ComputhermSwitch(SwitchEntity, RestoreEntity):
             'current_temp': self._thermostat_current_temp,
             'target_temp': self._thermostat_target_temp
         }
-
     async def async_added_to_hass(self) -> None:
         """Run when entity about to added."""
         await super().async_added_to_hass()
-
-        # Set thermostat time
-        self._hass.async_add_executor_job(self._thermostat.set_time)
+        await self._thermostat.set_time()
 
     async def async_turn_on(self, **kwargs) -> None:
-        """Turn  the entity on"""
-        device = self._thermostat.device()
-        if device.auth():
-            device.set_power(BROADLINK_POWER_ON)
-            device.set_mode(BROADLINK_MODE_MANUAL, 0, self.thermostat_get_sensor())
-            device.set_temp(self._max_temp if self._turn_on_mode == BROADLINK_MAX_TEMP else float(self._turn_on_mode))
+        """Turn the entity on"""
+        def _apply(device):
+            if device.auth():
+                device.set_power(BROADLINK_POWER_ON)
+                device.set_mode(BROADLINK_MODE_MANUAL, 0, self.thermostat_get_sensor())
+                device.set_temp(self._max_temp if self._turn_on_mode == BROADLINK_MAX_TEMP else float(self._turn_on_mode))
 
+        await self._thermostat.run(_apply)
         self._state = STATE_ON
-        await self.async_update_ha_state()
+        self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs) -> None:
         """Turn the entity off"""
-        device = self._thermostat.device()
-        if device.auth():
-            if self._turn_off_mode == BROADLINK_TURN_OFF:
-                device.set_power(BROADLINK_POWER_OFF)
-            else:
-                device.set_mode(BROADLINK_MODE_MANUAL, 0, self.thermostat_get_sensor())
-                device.set_temp(self._min_temp if self._turn_off_mode == BROADLINK_MIN_TEMP else float(self._turn_off_mode))
+        def _apply(device):
+            if device.auth():
+                if self._turn_off_mode == BROADLINK_TURN_OFF:
+                    device.set_power(BROADLINK_POWER_OFF)
+                else:
+                    device.set_mode(BROADLINK_MODE_MANUAL, 0, self.thermostat_get_sensor())
+                    device.set_temp(self._min_temp if self._turn_off_mode == BROADLINK_MIN_TEMP else float(self._turn_off_mode))
 
+        await self._thermostat.run(_apply)
         self._state = STATE_OFF
-        await self.async_update_ha_state()
+        self.async_write_ha_state()
 
     async def async_update(self) -> None:
         """Get thermostat info"""
-        data = await self._hass.async_add_executor_job(self._thermostat.read_status)
+        data = await self._thermostat.read_status()
 
         if not data:
             self._state = STATE_UNAVAILABLE
@@ -168,4 +166,3 @@ class ComputhermSwitch(SwitchEntity, RestoreEntity):
 
         self._min_temp = int(data['svl'])
         self._max_temp = int(data['svh'])
-
