@@ -5,6 +5,6 @@
   "dependencies": [],
   "codeowners": ["@tetye"],
   "issue_tracker": "https://github.com/tetye/HACS_computherm",
-  "requirements": ["pythoncrc", "broadlink"],
+  "requirements": ["pythoncrc", "python-broadlink==1.0.6"],
   "version": "1.0.6"
 }
