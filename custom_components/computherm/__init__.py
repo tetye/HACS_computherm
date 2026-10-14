@@ -1,6 +1,7 @@
 import broadlink
 import logging
 import time
+import asyncio
 from datetime import datetime
 
 from homeassistant.const import (
@@ -40,42 +41,43 @@ class BroadlinkThermostat:
         self._host = host
         self._port = port
 
-    def device(self):
+    def _device(self):
         max_attempt = 3
         for attempt in range(0, max_attempt):
             try:
                 attempt += 1
-                broadlink.timeout = 1
                 return broadlink.hello(self._host, port=self._port, timeout=3)
             except TypeError:
                 return broadlink.hello(self._host, timeout=3)
             except broadlink.exceptions.NetworkTimeoutError as e:
                 if attempt == max_attempt:
                     _LOGGER.error("Thermostat %s network error: %s", self._host, str(e))
+        raise AssertionError("Thermostat discovery exhausted retries")
+    async def run(self, func):
+        return await asyncio.to_thread(lambda: func(self._device()))
 
-    def set_time(self):
+    async def set_time(self):
         """Set thermostat time"""
         try:
-            device = self.device()
-            if device.auth():
-                now = datetime.now()
-                device.set_time(now.hour,
-                                now.minute,
-                                now.second,
-                                now.weekday() + 1)
-                _LOGGER.debug("Thermostat date / time is set")
+            def _apply(device):
+                if device.auth():
+                    now = datetime.now()
+                    device.set_time(now.hour, now.minute, now.second, now.weekday() + 1)
+            await self.run(_apply)
+            _LOGGER.debug("Thermostat date / time is set")
         except Exception as e:
             _LOGGER.error("Thermostat %s set_time error: %s", self._host, str(e))
 
-    def read_status(self):
+    async def read_status(self):
         """Read thermostat data"""
-        data = None
         try:
-            device = self.device()
-            if device.auth():
-                data = device.get_full_status()
-                _LOGGER.debug("Received %s thermostat data: %s", self._host, data)
+            def _apply(device):
+                if device.auth():
+                    return device.get_full_status()
+                return None
+            data = await self.run(_apply)
+            _LOGGER.debug("Received %s thermostat data: %s", self._host, data)
+            return data
         except Exception as e:
             _LOGGER.warning("Thermostat %s read_status() error: %s", self._host, str(e))
-        finally:
-            return data
+            return None
